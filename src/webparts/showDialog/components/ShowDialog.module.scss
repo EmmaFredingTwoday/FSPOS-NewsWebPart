@@ -1,0 +1,140 @@
+@import '~@fluentui/react/dist/sass/References.scss';
+@import '~@microsoft/sp-office-ui-fabric-core/dist/sass/SPFabricCore.scss';
+
+:root {
+/* Typography */
+  --h1: 1.75rem;
+  --info-text: 1rem;
+  --text-width-wide: 70ch;
+  --text-width-medium: 60ch;
+  --fw-bold: 700; 
+  --fw-regular: 500;
+  --fw-light: 300;
+/* Spacing */
+  --spacing-xxs: 0.5em;
+  --spacing-xs: 1em;
+  --spacing-s: 1.5em;
+  --spacing-m: 3em;
+  --spacing-l: 6em;
+  --spacing-xl: 8em;
+/* Misc */
+  --radius-xs: 0.25em;
+  --radius-s: 0.5em;
+  --center-it: auto;
+}
+
+.showDialog {
+  overflow: hidden;
+  padding: 1em;
+  color: "[theme:bodyText, default: #323130]";
+  color: var(--bodyText);
+  &.teams {
+    font-family: $ms-font-family-fallbacks;
+  }
+}
+
+.welcome {
+  text-align: center;
+}
+
+.welcomeImage {
+  width: 100%;
+  max-width: 420px;
+}
+
+.links {
+  a {
+    text-decoration: none;
+    color: "[theme:link, default:#03787c]";
+    color: var(--link); // note: CSS Custom Properties support is limited to modern browsers only
+
+    &:hover {
+      text-decoration: underline;
+      color: "[theme:linkHovered, default: #014446]";
+      color: var(--linkHovered); // note: CSS Custom Properties support is limited to modern browsers only
+    }
+  }
+}
+
+.row {  
+  @include ms-Grid-row;
+}
+
+.ms-Grid {
+  @include ms-Grid;
+}
+
+.ms-Grid-row {
+  @include ms-Grid;
+}
+
+.ms-col {
+  @include ms-Grid-col;
+  @include ms-sm6;
+  @include ms-md4;
+  @include ms-lg2;
+}
+
+.ms-col2 {
+  @include ms-Grid-col;
+  @include ms-sm6;
+  @include ms-md8;
+  @include ms-lg10;
+}
+
+.info_block {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 20px;
+  margin-top: 8px;
+}
+
+.info {
+  font-size: var(--info-text);
+  color: var(--text);
+}
+
+img {
+  width: 50%;
+  height: 50%;
+  margin-block: var(--spacing-m);
+  border-radius: var(--radius-xs);
+}
+
+h1 {
+  color: var(--emphasis);
+  font-size: var(--h1);
+  font-weight: var(--fw-bold);
+  margin:0;
+}
+
+h2 {
+  color: var(--emphasis);
+  margin-top: var(--spacing-m);
+  font-size: var(--h2);
+  font-weight: var(--fw-bold);
+}
+
+h3 {
+  color: var(--accent);
+  margin-bottom: var(--spacing-s);
+  font-size: var(--h3);
+  font-weight: var(--fw-bold);
+}
+
+p {
+  font-size: var(--paragraph);
+  color: var(--text);
+  line-height: 25px;
+  letter-spacing: 0.25px;
+  margin:0;
+}
+
+.break {
+  margin-bottom: 50px;
+}
+
+.dialog {
+  width: 700px;
+  height: 1200 px;
+}
