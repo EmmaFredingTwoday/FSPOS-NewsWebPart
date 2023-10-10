@@ -4,10 +4,10 @@ import { IShowDialogProps } from './IShowDialogProps';
 import { PrimaryButton } from '@fluentui/react/lib';
 import { IFile, IResponseItem, IImageFile } from "./interfaces";
 import { Logger, LogLevel } from "@pnp/logging";
-import { Caching } from "@pnp/queryable";
-import { SPFI, spfi } from "@pnp/sp";
 import { getSP } from '../pnpjsConfig';
 import  TaskDialog from './sampleDialog/TaskDialog'
+import relativeTime from 'dayjs/plugin/relativeTime';
+
 export interface IShowDialogState {
   items: IFile[];
   errors: string[];
@@ -15,6 +15,8 @@ export interface IShowDialogState {
   renderList: boolean;
 }
 import dayjs from 'dayjs';
+dayjs.extend(relativeTime);
+import { SPFI } from '@pnp/sp';
 
 export default class ShowDialog extends React.Component<IShowDialogProps, IShowDialogState> {
   private LOG_SOURCE = "🅿PnPjsExample";
@@ -36,42 +38,57 @@ export default class ShowDialog extends React.Component<IShowDialogProps, IShowD
   }
 
   public render(): React.ReactElement<IShowDialogProps> {  
+    // Functionality logic (Unchanged)
     //this._readListItems();  
     //this. _readImages(); 
     this._updateList();
 
     return (
-      <section>
-          <div style={{textAlign: 'center', marginTop: '10px', marginBottom: '30px'}}>
-            <PrimaryButton text='Skriv inlägg' onClick={this._createTask}/>
+      <section style={{ fontFamily: 'Arial, sans-serif' }}>
+          <div style={{ textAlign: 'center', margin: '10px 0 30px' }}>
+            <PrimaryButton text='Skriv inlägg' onClick={this._createTask} />
           </div>   
-        <div>
-          {this.state.items.map((item, idx) => {
-            const shortTime = dayjs(item.Created).format("HH:mm");
-              return (<article>
-                        <p>{shortTime}</p>
-                        <h1>{item.Title}</h1>
-                        <img src={item.imageLink} />
-                        <div className={styles.info_block}>
-                          <p className={styles.info}>{item.Author0}</p>  
-                        </div>                           
-                        <p className={styles.break}>{item.Content}</p>
-                      </article>
-                    );
-                  })}
-        </div>     
+
+          <div style={{ width: '100%' }}>
+            {this.state.items.map((item, idx) => {
+              return (
+                <article style={{ padding: '15px', borderBottom: '1px solid #e5e5e5' }}>
+                  <div style={{ background: `url(${item.imageLink}) center / cover no-repeat`, width: '100%', height: '250px' }}></div>
+                  <h1 style={{ fontSize: '24px', margin: '10px 0' }}>{item.Title}</h1>
+                  <p style={{ margin: '10px 0' }}>{dayjs(item.Created).fromNow()}</p>
+                  <div className={styles.info_block} style={{ margin: '10px 0' }}>
+                    <p style={{ color: '#888' }}>{item.Author0}</p>  
+                  </div>                           
+                  <p style={{ margin: '10px 0', lineHeight: '1.5' }}>{item.Content}</p>
+                </article>
+              );
+            })}
+          </div>     
       </section>
     );
-  }
+}
 
-  private _createTask = async (): Promise<void> => {
-    const taskDialog = new TaskDialog(      
-      async (header, content, author) => {},
-      async () => alert('You closed the dialog!')
-    );
-    this.setState({renderList: true});
-    taskDialog.show();  
-  }
+
+private _createTask = async (): Promise<void> => {
+  const taskDialog = new TaskDialog(      
+    async (header, content, author) => {
+      // After a task is created, re-fetch the list items to reflect the change
+      await this._readListItems();
+    },
+    async () => alert('You closed the dialog!')
+  );
+  this.setState({renderList: true});
+  taskDialog.show();  
+}
+
+  // private _createTask = async (): Promise<void> => {
+  //   const taskDialog = new TaskDialog(      
+  //     async (header, content, author) => {},
+  //     async () => alert('You closed the dialog!')
+  //   );
+  //   this.setState({renderList: true});
+  //   taskDialog.show();  
+  // }
 
   private _updateList = async (): Promise<void> => {
     if(this.state.renderList == true){
@@ -83,9 +100,8 @@ export default class ShowDialog extends React.Component<IShowDialogProps, IShowD
 
   private _readListItems = async (): Promise<void> => {
     try{
-      const spCache = spfi(this._sp).using(Caching({store:"session"}));
-
-      const response: IResponseItem[] = await spCache.web.lists
+      // Removing caching here
+      const response: IResponseItem[] = await this._sp.web.lists
         .getByTitle(this.LIST_NAME)
         .items
         .select("Id", "Title", "Content", "Author0", "Date","imageLink")
@@ -106,10 +122,10 @@ export default class ShowDialog extends React.Component<IShowDialogProps, IShowD
       this.setState({ items });
       console.log(items);
     } 
-      catch(err){
+    catch(err){
       Logger.write(`${this.LOG_SOURCE} (_readAllFilesSize) - ${JSON.stringify(err)} - `, LogLevel.Error);
     }
-  }
+}
 
   componentDidMount() {
     this._readListItems();
