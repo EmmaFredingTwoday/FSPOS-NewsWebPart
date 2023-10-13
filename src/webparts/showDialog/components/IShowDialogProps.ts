@@ -4,4 +4,5 @@ export interface IShowDialogProps {
   environmentMessage: string;
   hasTeamsContext: boolean;
   userDisplayName: string;
+  listName: string;
 }

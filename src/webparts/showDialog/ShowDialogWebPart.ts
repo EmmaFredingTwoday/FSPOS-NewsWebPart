@@ -46,6 +46,7 @@ export default class ShowDialogWebPart extends BaseClientSideWebPart<IShowDialog
       ShowDialog,
       {
         description: this.properties.description,
+        listName: this.properties.listName,
         isDarkTheme: this._isDarkTheme,
         environmentMessage: this._environmentMessage,
         hasTeamsContext: !!this.context.sdks.microsoftTeams,

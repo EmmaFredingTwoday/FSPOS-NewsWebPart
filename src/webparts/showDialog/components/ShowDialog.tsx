@@ -1,12 +1,13 @@
 import * as React from 'react';
 import styles from './ShowDialog.module.scss';
 import { IShowDialogProps } from './IShowDialogProps';
-import { PrimaryButton } from '@fluentui/react/lib';
+//import { PrimaryButton } from '@fluentui/react/lib';
 import { IFile, IResponseItem, IImageFile } from "./interfaces";
 import { Logger, LogLevel } from "@pnp/logging";
 import { getSP } from '../pnpjsConfig';
-import  TaskDialog from './sampleDialog/TaskDialog'
+//import  TaskDialog from './sampleDialog/TaskDialog'
 import relativeTime from 'dayjs/plugin/relativeTime';
+require('dayjs/locale/sv')
 
 export interface IShowDialogState {
   items: IFile[];
@@ -20,9 +21,6 @@ import { SPFI } from '@pnp/sp';
 
 export default class ShowDialog extends React.Component<IShowDialogProps, IShowDialogState> {
   private LOG_SOURCE = "🅿PnPjsExample";
-  private LIST_NAME = "Loomis_intranet";
-  //private IMAGE_LIST_NAME: "Images1";
-  //private DOCUMENT_NAME = "Documents";
   private _sp: SPFI;  
 
   constructor(props: IShowDialogProps) {
@@ -42,24 +40,32 @@ export default class ShowDialog extends React.Component<IShowDialogProps, IShowD
     //this._readListItems();  
     //this. _readImages(); 
     this._updateList();
+    dayjs.locale('sv');
 
     return (
       <section style={{ fontFamily: 'Arial, sans-serif' }}>
-          <div style={{ textAlign: 'center', margin: '10px 0 30px' }}>
+          {/* <div style={{ textAlign: 'center', margin: '10px 0 30px' }}>
             <PrimaryButton text='Skriv inlägg' onClick={this._createTask} />
-          </div>   
+          </div>    */}
 
           <div style={{ width: '100%' }}>
             {this.state.items.map((item, idx) => {
+              let htmlstring = item.richtext;
+              let imgurl = false;
+              if(item.fullimagelink.toLowerCase().indexOf("/.jpg") === -1){
+                imgurl = true;
+              }
               return (
                 <article style={{ padding: '15px', borderBottom: '1px solid #e5e5e5' }}>
-                  <div style={{ background: `url(${item.imageLink}) center / cover no-repeat`, width: '100%', height: '250px' }}></div>
+                  <div style={{ alignContent: 'center'}}>
+                    <img src={item.fullimagelink} className={imgurl ? styles.newsImage : styles.noImage} ></img>
+                  </div>
                   <h1 style={{ fontSize: '24px', margin: '10px 0' }}>{item.Title}</h1>
                   <p style={{ margin: '10px 0' }}>{dayjs(item.Created).fromNow()}</p>
                   <div className={styles.info_block} style={{ margin: '10px 0' }}>
                     <p style={{ color: '#888' }}>{item.Author0}</p>  
                   </div>                           
-                  <p style={{ margin: '10px 0', lineHeight: '1.5' }}>{item.Content}</p>
+                  <p style={{ margin: '10px 0', lineHeight: '1.5' }} dangerouslySetInnerHTML={{__html: htmlstring}} ></p>
                 </article>
               );
             })}
@@ -69,17 +75,17 @@ export default class ShowDialog extends React.Component<IShowDialogProps, IShowD
 }
 
 
-private _createTask = async (): Promise<void> => {
-  const taskDialog = new TaskDialog(      
-    async (header, content, author) => {
-      // After a task is created, re-fetch the list items to reflect the change
-      await this._readListItems();
-    },
-    async () => alert('You closed the dialog!')
-  );
-  this.setState({renderList: true});
-  taskDialog.show();  
-}
+// private _createTask = async (): Promise<void> => {
+//   const taskDialog = new TaskDialog(      
+//     async (header, content, author) => {
+//       // After a task is created, re-fetch the list items to reflect the change
+//       await this._readListItems();
+//     },
+//     async () => alert('You closed the dialog!')
+//   );
+//   this.setState({renderList: true});
+//   taskDialog.show();  
+// }
 
   // private _createTask = async (): Promise<void> => {
   //   const taskDialog = new TaskDialog(      
@@ -102,9 +108,9 @@ private _createTask = async (): Promise<void> => {
     try{
       // Removing caching here
       const response: IResponseItem[] = await this._sp.web.lists
-        .getByTitle(this.LIST_NAME)
+        .getByTitle(this.props.listName)
         .items
-        .select("Id", "Title", "Content", "Author0", "Date","imageLink")
+        .select("Id", "Title", "Content", "Author0", "fullimagelink", "richtext")
         .orderBy("Created", false)();
 
       // use map to convert IResponseItem[] into our internal object IFile[]
@@ -115,7 +121,8 @@ private _createTask = async (): Promise<void> => {
           Content: item.Content || "Unknown",
           Author0: item.Author0 || "Unknown",
           Date: item.Date || "Unknown",
-          imageLink: item.imageLink || "Unknown",
+          fullimagelink: item.fullimagelink || "Unknown",
+          richtext: item.richtext || "Unknown",
           Created: item.Created
         };
       });

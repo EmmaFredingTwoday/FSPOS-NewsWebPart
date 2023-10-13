@@ -5,7 +5,8 @@ export interface IFile {
     Content: string;
     Author0: string;
     Date: string;
-    imageLink: string;
+    fullimagelink: string;
+    richtext: string;
     Created: Date;
   }
 
@@ -29,7 +30,8 @@ export interface IImageFile{
     Content: string;
     Author0: string;
     Date: string;
-    imageLink: string;
+    fullimagelink: string;
+    richtext: string;
     Created: Date;
   }
 
