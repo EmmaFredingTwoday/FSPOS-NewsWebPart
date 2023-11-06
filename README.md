@@ -1,4 +1,4 @@
-# spo-sp-fx-dialog
+# fspos-news
 
 ## Summary
 

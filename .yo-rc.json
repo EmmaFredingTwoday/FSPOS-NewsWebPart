@@ -8,12 +8,12 @@
       "@microsoft/teams-js": "2.12.0"
     },
     "version": "1.18.0",
-    "libraryName": "spo-sp-fx-dialog",
+    "libraryName": "fspos-newswebpart",
     "libraryId": "acc39073-fcad-4f43-aa3a-36f662c90c7f",
     "environment": "spo",
     "packageManager": "npm",
-    "solutionName": "spo-sp-fx-dialog",
-    "solutionShortDescription": "spo-sp-fx-dialog description",
+    "solutionName": "fspos-newswebpart",
+    "solutionShortDescription": "fspos-newswebpart description",
     "skipFeatureDeployment": true,
     "isDomainIsolated": false,
     "componentType": "webpart"

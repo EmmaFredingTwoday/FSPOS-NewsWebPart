@@ -50,6 +50,8 @@ export default class ShowDialog extends React.Component<IShowDialogProps, IShowD
 
           <div style={{ width: '100%' }}>
             {this.state.items.map((item, idx) => {
+              let datespan = dayjs(item.Created).fromNow();
+              console.log("Datum " + datespan + " datum created " + item.Created);
               let htmlstring = item.richtext;
               let imgurl = false;
               if(item.fullimagelink.toLowerCase().indexOf("/.jpg") === -1){
@@ -110,7 +112,7 @@ export default class ShowDialog extends React.Component<IShowDialogProps, IShowD
       const response: IResponseItem[] = await this._sp.web.lists
         .getByTitle(this.props.listName)
         .items
-        .select("Id", "Title", "Content", "Author0", "fullimagelink", "richtext")
+        .select("Id", "Title", "Content", "Author0", "fullimagelink", "richtext", "Created")
         .orderBy("Created", false)();
 
       // use map to convert IResponseItem[] into our internal object IFile[]
